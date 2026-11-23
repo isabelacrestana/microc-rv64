@@ -98,7 +98,8 @@ class TypeChecker:
                         )
 
         elif isinstance(statement, Assignment):
-            variable_type = statement.target.metadata["symbol"].type
+            target_symbol = statement.target.metadata.get("symbol")
+            variable_type = target_symbol.type if target_symbol else UNKNOWN
             self.check_expression(statement.target)
             value_type = self.check_expression(statement.value)
 
@@ -179,7 +180,7 @@ class TypeChecker:
                         SemanticDiagnostic(
                             SemanticErrorKind.RETURN_MISMATCH,
                             "Função com retorno void não pode retornar um valor.",
-                            statement.value.span,
+                            statement.span,
                         )
                     )
                 elif value_type is not UNKNOWN:
